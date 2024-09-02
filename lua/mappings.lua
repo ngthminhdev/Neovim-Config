@@ -89,8 +89,15 @@ end, { desc = "terminal new horizontal term" }) ]]
 -- require("nvchad.term").toggle { pos = "vsp", id = "vtoggleTerm" }
 -- end, { desc = "terminal toggleable vertical term" })
 --
+
+local filename = vim.fn.expand('%:t')
+local cmd = string.format("gcc %s && ./a.out", vim.fn.shellescape(filename))
+
 map({ "n", "t" }, "<F10>", function()
-  require("nvchad.term").toggle { pos = "vsp", size = 0.3, id = "vtoggleTerm" }
+  require("nvchad.term").runner { pos = "vsp", size = 0.3, id = "vtoggleTerm",
+    cmd = cmd,
+    clear_cmd = false
+  }
 end, { desc = "terminal new horizontal term" })
 
 map({ "n", "t" }, "<F12>", function()
