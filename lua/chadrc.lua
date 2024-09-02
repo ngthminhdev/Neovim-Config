@@ -5,7 +5,7 @@
 local M = {}
 
 M.ui = {
-	theme = "onedark",
+	theme = "chadracula",
 
 	-- hl_override = {
 	-- 	Comment = { italic = true },
