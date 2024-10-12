@@ -14,7 +14,14 @@ local options = {
     "c",
     "cpp",
     "bash",
-    "dap_repl"
+    "dap_repl",
+    "html",
+    "json",
+    "css",
+    "scss",
+    "nginx",
+    "json",
+    "dart",
   },
   sync_install = true,
   indent = {

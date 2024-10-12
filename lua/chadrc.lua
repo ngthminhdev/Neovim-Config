@@ -4,8 +4,10 @@
 ---@type ChadrcConfig
 local M = {}
 
-M.ui = {
-	theme = "chadracula",
+M.base46 = {
+	theme = "bearded-arc",
+  toggle_theme = { "bearded-arc", "one_light" },
+
 
 	-- hl_override = {
 	-- 	Comment = { italic = true },

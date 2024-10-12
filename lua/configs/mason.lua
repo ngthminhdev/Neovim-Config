@@ -1,7 +1,20 @@
 dofile(vim.g.base46_cache .. "mason")
-
 local options = {
-  ensure_installed = { "lua-language-server", "stylua" }, -- not an option from mason.nvim
+  ensure_installed = {
+    "lua-language-server",
+    "stylua",
+    "bashls",
+    "clangd",
+    "ast_grep",
+    "docker_compose_language_service",
+    "dotls",
+    "html",
+    "cssls",
+    "sqls",
+    "yamlls",
+    "bashls",
+    "typescript-language-server",
+  }, -- not an option from mason.nvim
 
   PATH = "skip",
 

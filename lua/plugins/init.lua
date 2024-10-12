@@ -1,23 +1,22 @@
 return {
-
   {
-    "NvChad/base46",
-    branch = "v2.5",
+    "nvchad/base46",
     build = function()
       require("base46").load_all_highlights()
     end,
   },
 
   {
-    "NvChad/ui",
-    branch = "v2.5",
+    "nvchad/ui",
     lazy = false,
     config = function()
       require "nvchad"
-      require"configs.term"
     end,
   },
 
+  "nvchad/volt",
+  "nvchad/minty",
+  "nvchad/menu",
 
   {
     "nvim-tree/nvim-web-devicons",
@@ -88,17 +87,29 @@ return {
   "nvim-lua/plenary.nvim",
 
   -- formatting!
-  -- {
-    -- "stevearc/conform.nvim",
-    -- opts = {
-      -- formatters_by_ft = {
-        -- lua = { "stylua" },
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        html = { "prettier" },
+        javascript = { "prettier" },
+        typescript = { "prettier" },
+        yaml = { "prettier" },
+        cpp = { "clang-format" },
+      },
+      -- formatters = {
+      --   prettier = {
+      --     prepend_args = function()
+      --       return { "--tab-width", "2" }
+      --     end,
+      --   },
       -- },
-    -- },
-    -- config = function(_, opts)
-      -- require("conform").setup(opts)
-    -- end,
-  -- },
+    },
+    config = function(_, opts)
+      require("conform").setup(opts)
+    end,
+  },
 
   -- git stuff
   {
@@ -158,7 +169,6 @@ return {
       require("configs.easymotion").defaults()
     end,
   },
-
 
   -- load luasnips + cmp related in insert mode only
   {
@@ -248,13 +258,13 @@ return {
     build = ":TSUpdate",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
-      { 'LiadOz/nvim-dap-repl-highlights', config = true, branch = 'LiadOz/fix-check-parser' },
+      { "LiadOz/nvim-dap-repl-highlights", config = true, branch = "LiadOz/fix-check-parser" },
     },
     opts = function()
       return require "configs.treesitter"
     end,
     config = function(_, opts)
-      require('nvim-dap-repl-highlights').setup()
+      require("nvim-dap-repl-highlights").setup()
       require("nvim-treesitter.configs").setup(opts)
     end,
   },
@@ -271,8 +281,8 @@ return {
     end,
   },
   {
-    'mxsdev/nvim-dap-vscode-js',
-    requires = { 'mfussenegger/nvim-dap' }
+    "mxsdev/nvim-dap-vscode-js",
+    requires = { "mfussenegger/nvim-dap" },
   },
   {
     "rcarriga/nvim-dap-ui",
@@ -282,11 +292,11 @@ return {
     end,
   },
   {
-    'akinsho/flutter-tools.nvim',
+    "akinsho/flutter-tools.nvim",
     lazy = false,
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'stevearc/dressing.nvim', -- optional for vim.ui.select
+      "nvim-lua/plenary.nvim",
+      "stevearc/dressing.nvim", -- optional for vim.ui.select
     },
     config = function()
       require("flutter-tools").setup {
@@ -294,22 +304,22 @@ return {
           enabled = true,
           run_via_dap = true,
           register_configurations = function(paths)
-            require('dap').adapters.dart = {
-              type = 'executable',
-              command = '/home/ngthminhdev/fvm/versions/2.8.1/bin/dart',
+            require("dap").adapters.dart = {
+              type = "executable",
+              command = "/home/ngthminhdev/fvm/versions/2.8.1/bin/dart",
               -- command = '${workspaceFolder}/.fvm/flutter_sdk',
-              args = {'debug_adapter'},
+              args = { "debug_adapter" },
               options = {
                 detached = false,
               },
             }
 
             -- Flutter
-            require('dap').adapters.flutter = {
-              type = 'executable',
-              -- command = '/home/ngthminhdev/fvm/versions/2.8.1/bin/flutter',
-              command = '/home/ngthminhdev/fvm/versions/3.19.0/bin/flutter',
-              args = {'debug_adapter'},
+            require("dap").adapters.flutter = {
+              type = "executable",
+              command = '/home/ngthminhdev/fvm/versions/2.8.1/bin/flutter',
+              -- command = "/home/ngthminhdev/fvm/versions/3.19.0/bin/flutter",
+              args = { "debug_adapter" },
               options = {
                 detached = false,
               },
@@ -320,13 +330,31 @@ return {
               {
                 type = "flutter",
                 request = "launch",
-                name = "[Local] KPOS",
+                name = "[Development] KPOS",
                 args = {
-                  "--flavor", "local",
+                  "--flavor",
+                  "development",
                 },
                 dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
                 flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
                 program = "${workspaceFolder}/lib/main.dart",
+                cwd = "${workspaceFolder}",
+                platform = "android", -- Chỉ định platform (android hoặc ios)
+                autoReload = {
+                  enable = true,
+                },
+              },
+              {
+                type = "flutter",
+                request = "launch",
+                name = "[Local] KPOS",
+                args = {
+                  "--flavor",
+                  "local",
+                },
+                dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
+                flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
+                program = "${workspaceFolder}/lib/main_development.dart",
                 cwd = "${workspaceFolder}",
                 platform = "android",
                 autoReload = {
@@ -338,7 +366,8 @@ return {
                 request = "launch",
                 name = "[Staging] KPOS",
                 args = {
-                  "--flavor", "local",
+                  "--flavor",
+                  "local",
                 },
                 dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
                 flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
@@ -351,7 +380,8 @@ return {
                 request = "launch",
                 name = "[Production] KPOS",
                 args = {
-                  "--flavor", "local",
+                  "--flavor",
+                  "local",
                 },
                 dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
                 flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
@@ -366,7 +396,8 @@ return {
                 request = "launch",
                 name = "[Development] KDB",
                 args = {
-                  "--flavor", "development",
+                  "--flavor",
+                  "development",
                 },
                 dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
                 flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
@@ -382,7 +413,8 @@ return {
                 request = "launch",
                 name = "[Production] KDB",
                 args = {
-                  "--flavor", "production",
+                  "--flavor",
+                  "production",
                 },
                 dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
                 flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
@@ -437,8 +469,41 @@ return {
   {
     "karb94/neoscroll.nvim",
     lazy = false,
-    config = function ()
-      require('neoscroll').setup({})
-    end
+    config = function()
+      require("neoscroll").setup {}
+    end,
+  },
+  {
+    "windwp/nvim-ts-autotag",
+    requires = "nvim-treesitter/nvim-treesitter",
+    config = function()
+      require("nvim-ts-autotag").setup {
+        opts = {
+          enable_close = true, -- Auto close tags
+          enable_rename = true, -- Auto rename pairs of tags
+          enable_close_on_slash = false, -- Auto close on trailing </
+        },
+        per_filetype = {
+          ["html"] = {
+            enable_close = false,
+          },
+        },
+      }
+    end,
+  },
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      lsp = {
+        signature = {
+          enabled = false,
+        },
+      },
+    },
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
   },
 }

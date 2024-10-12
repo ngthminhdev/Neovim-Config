@@ -200,4 +200,19 @@ vim.api.nvim_set_keymap('n', '<Leader>gf', ':LazyGit<CR>', { silent = true })
 
 dofile(vim.g.base46_cache .. "syntax")
 
-vim.keymap.set('n', '<C-n>', 'mciw*<Cmd>nohl<CR>', { remap = true })
+if vim.lsp.inlay_hint then
+  vim.lsp.inlay_hint.enable(true, { 0 })
+end
+
+vim.lsp.set_log_level('debug')
+
+-- if vim.lsp.inlay_hint then
+--   vim.keymap.set('n', "<F2>", function()
+--     local bufnr = vim.api.nvim_get_current_buf()
+--     if vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }) then
+--       vim.lsp.inlay_hint.disable(bufnr, false, { 0 })
+--     else
+--       vim.lsp.inlay_hint.enable(bufnr, true, { 0 })
+--     end
+--   end, { desc = "Toggle Inlay Hints" })
+-- end

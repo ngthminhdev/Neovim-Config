@@ -19,7 +19,8 @@ map("n", "<leader>k", "<C-w>k", { desc = "switch window up" })
 -- map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "file copy whole" })
 
 -- map("n", "<leader>n", "<cmd>set nu!<CR>", { desc= "toggle line number" })
-map("n", "<leader>n", ":tabnext<CR>", { desc = "Tab next" })
+-- map("n", "<space>tn", ":tabnew<CR>:terminal<CR>", { noremap = true, silent = true })
+map("n", "<space>tn", ":tabnext<CR>", { desc = "Tab next" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "toggle nvcheatsheet" })
 
@@ -63,8 +64,13 @@ map("n", "<leader>fc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = 
 map("n", "<leader>cm", "<cmd>Telescope git_commits<CR>", { desc = "telescope git commits" })
 map("n", "<leader>gt", "<cmd>Telescope git_status<CR>", { desc = "telescope git status" })
 map("n", "<leader>pt", "<cmd>Telescope terms<CR>", { desc = "telescope pick hidden term" })
-map("n", "<leader>th", "<cmd>Telescope themes<CR>", { desc = "telescope nvchad themes" })
+-- map("n", "<leader>th", "<cmd>Telescope themes<CR>", { desc = "telescope nvchad themes" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "telescope find files" })
+
+map("n", "<leader>th", function()
+  require("nvchad.themes").open()
+end, { desc = "telescope nvchad themes" })
+
 map(
   "n",
   "<leader>fa",
@@ -90,15 +96,27 @@ end, { desc = "terminal new horizontal term" }) ]]
 -- end, { desc = "terminal toggleable vertical term" })
 --
 
-local filename = vim.fn.expand('%:t')
-local cmd = string.format("gcc %s && ./a.out", vim.fn.shellescape(filename))
+local filename = vim.fn.expand "%:t"
+local cmd = string.format("g++ %s && ./a.out", vim.fn.shellescape(filename))
 
 map({ "n", "t" }, "<F10>", function()
-  require("nvchad.term").runner { pos = "vsp", size = 0.3, id = "vtoggleTerm",
-    cmd = cmd,
-    clear_cmd = false
+  require("nvchad.term").runner {
+    id = "cppRunner",
+    pos = "vsp",
+    size = 0.3,
+    clear_cmd = false,
+
+    cmd = function()
+      local file = vim.fn.expand "%"
+
+      local ft_cmds = {
+        cpp = "clear && g++ -o out " .. file .. " && ./out",
+      }
+
+      return ft_cmds[vim.bo.ft]
+    end,
   }
-end, { desc = "terminal new horizontal term" })
+end, { desc = "CPP compile and run" })
 
 map({ "n", "t" }, "<F12>", function()
   require("nvchad.term").toggle {
@@ -180,7 +198,6 @@ vim.api.nvim_create_user_command("DapiUIRemoveWatch", function(opts)
 end, { nargs = 1 })
 
 map("n", "<space>r", ":DapiUIRemoveWatch ", { noremap = true })
-map("n", "<space>tn", ":tabnew<CR>:terminal<CR>", { noremap = true, silent = true })
 map("n", "<space>fr", ":FlutterRun<CR>", { noremap = true, silent = true })
 map("n", "<space>cl", ":FlutterLogClear<CR>", { noremap = true, silent = true })
 -- Mở tab mới
@@ -195,3 +212,11 @@ map("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
 map("n", "<leader>ca", "<Cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 -- Open code actions for the selected visual range
 map("x", "<leader>ca", "<Cmd>lua vim.lsp.buf.range_code_action()<CR>", opts)
+
+map("n", "<leader>nl", function()
+  require("noice").cmd "last"
+end)
+
+map("n", "<leader>nh", function()
+  require("noice").cmd "history"
+end)

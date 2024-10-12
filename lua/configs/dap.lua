@@ -23,6 +23,22 @@ dap.configurations.dart = {
   {
     type = "flutter",
     request = "launch",
+    name = "[Development] KPOS",
+    args = {
+      "--flavor", "development",
+    },
+    dartSdkPath = "${workspaceFolder}/.fvm/flutter_sdk/bin/cache/dart-sdk",
+    flutterSdkPath = "${workspaceFolder}/.fvm/flutter_sdk",
+    program = "${workspaceFolder}/lib/main.dart",
+    cwd = "${workspaceFolder}",
+    platform = "android",  -- Chỉ định platform (android hoặc ios)
+    autoReload = {
+      enable = true,
+    },
+  },
+  {
+    type = "flutter",
+    request = "launch",
     name = "[Local] KPOS",
     args = {
       "--flavor", "local",
