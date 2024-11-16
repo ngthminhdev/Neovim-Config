@@ -53,37 +53,75 @@ function M.defaults()
     vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
   end
 
-  -- Cấu hình các LSP servers.
-  local servers = { 'lua_ls', 'ts_ls', 'clangd', 'cssls', 'docker_compose_language_service', 'html' }
-  for _, lsp in ipairs(servers) do
+-- Cấu hình các LSP servers
+local servers = { 'dartls', 'lua_ls', 'ts_ls', 'clangd', 'cssls', 'docker_compose_language_service', 'html' }
+
+for _, lsp in ipairs(servers) do
     local config = {
-      on_attach = on_attach,
-      capabilities = capabilities,
+        on_attach = on_attach,
+        capabilities = capabilities,
+        flags = {
+            debounce_text_changes = 150,
+        }
     }
 
-    if lsp == 'ts_ls' then
-      config.settings = {
-        typescript = {
-          inlayHints = {
-            includeInlayParameterNameHints = 'all',
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          }
-        },
-        javascript = {
-          inlayHints = {
-            includeInlayParameterNameHints = 'all',
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          }
+    -- Cấu hình riêng cho dartls
+    if lsp == 'dartls' then
+        local dart_capabilities = vim.lsp.protocol.make_client_capabilities()
+        -- Disable semantic tokens
+        dart_capabilities.textDocument.semanticTokens = {
+            dynamicRegistration = false,
+            formats = {},
+            requests = {
+                full = false,
+                range = false,
+            },
+            tokenModifiers = {},
+            tokenTypes = {}
         }
-      }
+        
+        config.capabilities = dart_capabilities
+        
+        -- Thêm các cài đặt đặc biệt cho Dart
+        config.settings = {
+            dart = {
+                completeFunctionCalls = true,
+                showTodos = true,
+                analysisExcludedFolders = {
+                    ".dart_tool",
+                    ".github",
+                    "build",
+                    "android",
+                    "ios",
+                }
+            }
+        }
+    end
+
+    -- Giữ nguyên cấu hình cho TypeScript
+    if lsp == 'ts_ls' then
+        config.settings = {
+            typescript = {
+                inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                }
+            },
+            javascript = {
+                inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                }
+            }
+        }
     end
 
     nvim_lsp[lsp].setup(config)
-  end
+end
 end
 
 return M

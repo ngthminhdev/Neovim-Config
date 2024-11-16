@@ -23,8 +23,12 @@ vim.o.swapfile = false
 -- Bật tô màu cú pháp trong init.lua
 vim.cmd('syntax enable')
 vim.cmd('syntax on')
-vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='DapBreakpoint', numhl=''})
 vim.fn.sign_define('DapStopped', { text='', texthl='DapStopped', linehl='DapStopped', numhl= 'DapStopped' })
+
+vim.cmd [[
+  highlight DapStopped guibg=#3c3836
+]]
 
 vim.g.flutter_tools_hot_reload_on_save = 1
 
@@ -36,7 +40,6 @@ end
 
 
 vim.api.nvim_set_keymap('i', 'clg', [[console.log(`File: <C-R>=expand('%')<CR> - Line: <C-R>=line('.')<CR>: `, )<Left>]], { noremap = true, silent = true })
-
 
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -136,10 +139,18 @@ dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close({})
 end
 
--- dap.listeners.after.event_stopped["dapui_config"] = function()
-  -- dapui.update_scopes()
-  -- dapui.update_watches()
--- end
+dap.defaults.dart.exception_breakpoints = { "uncaught" }
+
+dap.listeners.after.event_breakpoint['dart-debug'] = function(session, body)
+    -- Tự động cập nhật ID breakpoint
+    if body.reason == 'changed' and body.breakpoint.id then
+        for _, bp in pairs(session.breakpoints) do
+            if bp.line == body.breakpoint.line then
+                bp.id = body.breakpoint.id
+            end
+        end
+    end
+end
 
 require("dap-vscode-js").setup({
   debugger_path = "/home/ngthminhdev/Services/vscode-js-debug", -- Path to vscode-js-debug installation.
@@ -206,13 +217,3 @@ end
 
 vim.lsp.set_log_level('debug')
 
--- if vim.lsp.inlay_hint then
---   vim.keymap.set('n', "<F2>", function()
---     local bufnr = vim.api.nvim_get_current_buf()
---     if vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }) then
---       vim.lsp.inlay_hint.disable(bufnr, false, { 0 })
---     else
---       vim.lsp.inlay_hint.enable(bufnr, true, { 0 })
---     end
---   end, { desc = "Toggle Inlay Hints" })
--- end

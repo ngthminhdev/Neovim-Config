@@ -14,7 +14,7 @@ dap.adapters.dart = {
 dap.adapters.flutter = {
   type = 'executable',
   -- command = '/home/ngthminhdev/fvm/versions/2.8.1/bin/flutter',
-  command = '/home/ngthminhdev/fvm/versions/3.19.0/bin/flutter',
+  command = '/home/ngthminhdev/fvm/versions/3.24.3/bin/flutter',
   args = {'debug_adapter'}
 }
 
@@ -91,10 +91,20 @@ dap.configurations.dart = {
     type = "flutter",
     request = "launch",
     name = "Launch flutter",
-    dartSdkPath = "/snap/bin/dart",
-    flutterSdkPath = "/snap/bin/flutter",
+    dartSdkPath = '/home/ngthminhdev/fvm/versions/3.24.3/bin/dart',
+    flutterSdkPath = '/home/ngthminhdev/fvm/versions/3.24.3/bin/flutter',
     program = "${workspaceFolder}/lib/main.dart",
     cwd = "${workspaceFolder}",
   },
 }
 
+dap.listeners.after.event_breakpoint['dart-debug'] = function(session, body)
+    -- Tự động cập nhật ID breakpoint
+    if body.reason == 'changed' and body.breakpoint.id then
+        for _, bp in pairs(session.breakpoints) do
+            if bp.line == body.breakpoint.line then
+                bp.id = body.breakpoint.id
+            end
+        end
+    end
+end
